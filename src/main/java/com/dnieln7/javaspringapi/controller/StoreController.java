@@ -15,7 +15,7 @@ public class StoreController {
     @Autowired
     private StoreRepository storeRepository;
 
-    @GetMapping("/stores")
+    @GetMapping("/store")
     public List<Store> getStore() {
         List<Store> stores = new ArrayList<>();
 
@@ -24,24 +24,24 @@ public class StoreController {
         return stores;
     }
 
-    @GetMapping("/stores/{id}")
+    @GetMapping("/store/{id}")
     public Store getStoreById(@PathVariable int id) {
         return storeRepository.findById(id).orElse(null);
     }
 
-    @PostMapping("/stores")
+    @PostMapping("/store")
     public Store postStore(@RequestBody Store store) {
         return storeRepository.save(store);
     }
 
-    @PutMapping("/stores/{id}")
+    @PutMapping("/store/{id}")
     public Store putStore(@PathVariable int id, @RequestBody Store store) {
         store.setId(id);
 
         return storeRepository.save(store);
     }
 
-    @DeleteMapping("/stores/{id}")
+    @DeleteMapping("/store/{id}")
     public DeleteResponse deleteStore(@PathVariable int id) {
         Store store = storeRepository.findById(id).orElse(null);
 
