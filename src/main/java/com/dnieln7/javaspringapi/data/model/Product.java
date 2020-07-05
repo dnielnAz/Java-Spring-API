@@ -5,8 +5,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "food")
-public class Food {
+@Table(name = "products")
+public class Product {
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -19,10 +19,10 @@ public class Food {
     @ManyToOne
     private Store store;
 
-    public Food() {
+    public Product() {
     }
 
-    public Food(int id, String name, String description, int quantity, double price, Store store) {
+    public Product(int id, String name, String description, int quantity, double price, Store store) {
         this.id = id;
         this.name = name;
         this.description = description;
