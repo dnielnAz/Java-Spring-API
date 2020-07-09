@@ -6,6 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Main class
+ *
+ * @author dnieln7
+ */
 @SpringBootApplication
 public class SpringAPI {
 
@@ -13,6 +18,9 @@ public class SpringAPI {
         SpringApplication.run(SpringAPI.class, args);
     }
 
+    /**
+     * CORS configuration by endpoint.
+     */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

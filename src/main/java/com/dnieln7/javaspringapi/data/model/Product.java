@@ -4,6 +4,11 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+/**
+ * Product model (One product can have many sellers).
+ *
+ * @author dnieln7
+ */
 @Entity
 @Table(name = "products")
 public class Product {
@@ -17,18 +22,18 @@ public class Product {
     private int quantity;
     private double price;
     @ManyToOne
-    private Store store;
+    private Seller seller;
 
     public Product() {
     }
 
-    public Product(int id, String name, String description, int quantity, double price, Store store) {
+    public Product(int id, String name, String description, int quantity, double price, Seller seller) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.quantity = quantity;
         this.price = price;
-        this.store = store;
+        this.seller = seller;
     }
 
     public int getId() {
@@ -71,11 +76,11 @@ public class Product {
         this.price = price;
     }
 
-    public Store getStore() {
-        return store;
+    public Seller getSeller() {
+        return seller;
     }
 
-    public void setStore(Store store) {
-        this.store = store;
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 }

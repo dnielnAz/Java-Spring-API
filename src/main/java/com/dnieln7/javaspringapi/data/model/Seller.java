@@ -8,11 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
+ * Seller model (One seller can have many products).
+ *
  * @author dnieln7
  */
 @Entity
 @Table(name = "stores")
-public class Store {
+public class Seller {
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -22,14 +24,14 @@ public class Store {
     private String address;
     private String phone;
 
-    public Store() {
+    public Seller() {
     }
 
-    public Store(int id) {
+    public Seller(int id) {
         this.id = id;
     }
 
-    public Store(int id, String name, String address, String phone) {
+    public Seller(int id, String name, String address, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;

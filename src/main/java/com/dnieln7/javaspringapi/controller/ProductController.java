@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * API controller for seller operations.
+ *
+ * @author dnieln7
+ */
 @RestController
 public class ProductController {
 
@@ -19,11 +24,10 @@ public class ProductController {
     public List<Product> getProducts(@RequestParam(required = false) Integer store) {
         List<Product> product;
 
-        if(store == null) {
+        if (store == null) {
             product = new ArrayList<>();
             productRepository.findAll().forEach(product::add);
-        }
-        else {
+        } else {
             product = productRepository.findByStoreId(store);
         }
 
