@@ -6,7 +6,6 @@ import com.dnieln7.javaspringapi.data.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,48 +17,47 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepository repository;
 
-    @GetMapping("/product")
-    public List<Product> getProducts(@RequestParam(required = false) Integer store) {
-        List<Product> product;
+    @GetMapping("/products")
+    public List<Product> getProducts(@RequestParam(required = false) Integer seller) {
+        List<Product> products;
 
-        if (store == null) {
-            product = new ArrayList<>();
-            productRepository.findAll().forEach(product::add);
+        if (seller == null) {
+            products = (List<Product>) repository.findAll();
         } else {
-            product = productRepository.findByStoreId(store);
+            products = repository.findBySellerId(seller);
         }
 
-        return product;
+        return products;
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("/products/{id}")
     public Product getProductById(@PathVariable int id) {
-        return productRepository.findById(id).orElse(null);
+        return repository.findById(id).orElse(null);
     }
 
-    @PostMapping("/product")
+    @PostMapping("/products")
     public Product postProduct(@RequestBody Product product) {
-        return productRepository.save(product);
+        return repository.save(product);
     }
 
-    @PutMapping("/product/{id}")
+    @PutMapping("/products/{id}")
     public Product putProduct(@PathVariable int id, @RequestBody Product product) {
         product.setId(id);
 
-        return productRepository.save(product);
+        return repository.save(product);
     }
 
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("/products/{id}")
     public DeleteResponse deleteProduct(@PathVariable int id) {
-        Product product = productRepository.findById(id).orElse(null);
+        Product product = repository.findById(id).orElse(null);
 
         if (product == null) {
             return new DeleteResponse(1, "Not found!");
         }
 
-        productRepository.delete(product);
+        repository.delete(product);
 
         return new DeleteResponse(1, "Deleted!");
     }

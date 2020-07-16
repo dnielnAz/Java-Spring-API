@@ -18,5 +18,5 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
      * @param sellerId Seller id.
      * @return A list of {@link Product} that share the provided seller.
      */
-    public List<Product> findByStoreId(int sellerId);
+    public List<Product> findBySellerId(int sellerId);
 }

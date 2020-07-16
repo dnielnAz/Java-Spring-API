@@ -26,8 +26,10 @@ public class SpringAPI {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/store").allowedOrigins("*");
-                registry.addMapping("/product").allowedOrigins("*");
+                registry.addMapping("/sellers").allowedOrigins("*");
+                registry.addMapping("/sellers/{id}").allowedOrigins("*").allowedMethods("PUT", "GET", "DELETE");
+                registry.addMapping("/products").allowedOrigins("*");
+                registry.addMapping("/products/{id}").allowedOrigins("*").allowedMethods("PUT", "GET", "DELETE");
             }
         };
     }
