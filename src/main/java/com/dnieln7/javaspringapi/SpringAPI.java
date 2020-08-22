@@ -30,6 +30,7 @@ public class SpringAPI {
                 registry.addMapping("/sellers/{id}").allowedOrigins("*").allowedMethods("PUT", "GET", "DELETE");
                 registry.addMapping("/products").allowedOrigins("*");
                 registry.addMapping("/products/{id}").allowedOrigins("*").allowedMethods("PUT", "GET", "DELETE");
+                registry.addMapping("/dashboard").allowedOrigins("*");
             }
         };
     }

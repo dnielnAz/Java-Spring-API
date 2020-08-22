@@ -6,6 +6,7 @@ import com.dnieln7.javaspringapi.data.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,13 +32,15 @@ public class SellerController {
 
     @PostMapping("/sellers")
     public Seller postSeller(@RequestBody Seller seller) {
+        seller.setCreated(LocalDateTime.now());
+        seller.setUpdated(LocalDateTime.now());
         return repository.save(seller);
     }
 
     @PutMapping("/sellers/{id}")
     public Seller putSeller(@PathVariable int id, @RequestBody Seller seller) {
         seller.setId(id);
-
+        seller.setUpdated(LocalDateTime.now());
         return repository.save(seller);
     }
 

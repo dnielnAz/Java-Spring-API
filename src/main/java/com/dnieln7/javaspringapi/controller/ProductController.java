@@ -6,6 +6,7 @@ import com.dnieln7.javaspringapi.data.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -39,13 +40,15 @@ public class ProductController {
 
     @PostMapping("/products")
     public Product postProduct(@RequestBody Product product) {
+        product.setCreated(LocalDateTime.now());
+        product.setUpdated(LocalDateTime.now());
         return repository.save(product);
     }
 
     @PutMapping("/products/{id}")
     public Product putProduct(@PathVariable int id, @RequestBody Product product) {
         product.setId(id);
-
+        product.setUpdated(LocalDateTime.now());
         return repository.save(product);
     }
 
