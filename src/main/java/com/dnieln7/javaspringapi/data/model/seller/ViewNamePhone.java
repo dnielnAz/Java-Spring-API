@@ -1,4 +1,4 @@
-package com.dnieln7.javaspringapi.data.model;
+package com.dnieln7.javaspringapi.data.model.seller;
 
 /**
  * View to show seller id, name and phone properties.

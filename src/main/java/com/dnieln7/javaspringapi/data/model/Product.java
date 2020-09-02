@@ -1,5 +1,6 @@
 package com.dnieln7.javaspringapi.data.model;
 
+import com.dnieln7.javaspringapi.data.model.seller.Seller;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

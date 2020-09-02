@@ -1,4 +1,4 @@
-package com.dnieln7.javaspringapi.data.model;
+package com.dnieln7.javaspringapi.data.model.seller;
 
 import org.hibernate.annotations.GenericGenerator;
 

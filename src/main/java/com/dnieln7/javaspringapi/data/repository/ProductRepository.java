@@ -1,11 +1,11 @@
 package com.dnieln7.javaspringapi.data.repository;
 
 import com.dnieln7.javaspringapi.data.model.Product;
-import com.dnieln7.javaspringapi.data.model.Seller;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Crud operations for {@link Product} model.
@@ -28,7 +28,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
      * @return A {@link Product} instance with the highest price.
      */
     @Query(value = "select * from products order by products.price desc limit 1", nativeQuery = true)
-    public Product findMaxPrice();
+    public Optional<Product> findMaxPrice();
 
     /**
      * Find cheapest product.
@@ -36,7 +36,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
      * @return A {@link Product} instance with the lowest price.
      */
     @Query(value = "select * from products order by products.price asc limit 1", nativeQuery = true)
-    public Product findMinPrice();
+    public Optional<Product> findMinPrice();
 
     /**
      * Find most available products.

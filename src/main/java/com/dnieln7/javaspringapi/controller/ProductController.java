@@ -1,8 +1,9 @@
 package com.dnieln7.javaspringapi.controller;
 
-import com.dnieln7.javaspringapi.controller.response.DeleteResponse;
 import com.dnieln7.javaspringapi.data.model.Product;
 import com.dnieln7.javaspringapi.data.repository.ProductRepository;
+import com.dnieln7.javaspringapi.exception.ResponseException;
+import com.dnieln7.javaspringapi.exception.ServerErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,8 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public Product getProductById(@PathVariable int id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
     }
 
     @PostMapping("/products")
@@ -47,21 +49,22 @@ public class ProductController {
 
     @PutMapping("/products/{id}")
     public Product putProduct(@PathVariable int id, @RequestBody Product product) {
-        product.setId(id);
-        product.setUpdated(LocalDateTime.now());
-        return repository.save(product);
+        return repository.findById(id)
+                .map(found -> {
+                    product.setId(id);
+                    product.setUpdated(LocalDateTime.now());
+                    return repository.save(product);
+                })
+                .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
     }
 
     @DeleteMapping("/products/{id}")
-    public DeleteResponse deleteProduct(@PathVariable int id) {
-        Product product = repository.findById(id).orElse(null);
-
-        if (product == null) {
-            return new DeleteResponse(1, "Not found!");
-        }
+    public Product deleteProduct(@PathVariable int id) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
 
         repository.delete(product);
 
-        return new DeleteResponse(1, "Deleted!");
+        return product;
     }
 }

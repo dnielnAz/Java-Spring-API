@@ -1,10 +1,12 @@
 package com.dnieln7.javaspringapi.controller;
 
-import com.dnieln7.javaspringapi.data.model.ViewNamePhone;
-import com.dnieln7.javaspringapi.data.model.ViewNamePhoneProducts;
+import com.dnieln7.javaspringapi.data.model.seller.ViewNamePhone;
+import com.dnieln7.javaspringapi.data.model.seller.ViewNamePhoneProducts;
 import com.dnieln7.javaspringapi.data.model.Product;
 import com.dnieln7.javaspringapi.data.repository.ProductRepository;
 import com.dnieln7.javaspringapi.data.repository.SellerRepository;
+import com.dnieln7.javaspringapi.exception.ResponseException;
+import com.dnieln7.javaspringapi.exception.ServerErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,12 +29,14 @@ public class DashboardController {
 
     @GetMapping("dashboard/products/max-price")
     public Product maxPrice() {
-        return productRepository.findMaxPrice();
+        return productRepository.findMaxPrice()
+                .orElseThrow(() -> new ResponseException(ServerErrors.DASHBOARD_PRICE_PRODUCT.getMessage()));
     }
 
     @GetMapping("dashboard/products/min-price")
     public Product minPrice() {
-        return productRepository.findMinPrice();
+        return productRepository.findMinPrice()
+                .orElseThrow(() -> new ResponseException(ServerErrors.DASHBOARD_PRICE_PRODUCT.getMessage()));
     }
 
     @GetMapping("dashboard/products/most-available")

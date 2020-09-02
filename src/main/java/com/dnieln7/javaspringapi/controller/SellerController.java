@@ -1,9 +1,12 @@
 package com.dnieln7.javaspringapi.controller;
 
-import com.dnieln7.javaspringapi.controller.response.DeleteResponse;
-import com.dnieln7.javaspringapi.data.model.Seller;
+import com.dnieln7.javaspringapi.data.model.seller.Seller;
 import com.dnieln7.javaspringapi.data.repository.SellerRepository;
+import com.dnieln7.javaspringapi.exception.ResponseException;
+import com.dnieln7.javaspringapi.exception.ServerErrors;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,7 +30,8 @@ public class SellerController {
 
     @GetMapping("/sellers/{id}")
     public Seller getSellerById(@PathVariable int id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseException(ServerErrors.SELLER_NOT_FOUND.getMessage()));
     }
 
     @PostMapping("/sellers")
@@ -39,21 +43,28 @@ public class SellerController {
 
     @PutMapping("/sellers/{id}")
     public Seller putSeller(@PathVariable int id, @RequestBody Seller seller) {
-        seller.setId(id);
-        seller.setUpdated(LocalDateTime.now());
-        return repository.save(seller);
+        return repository.findById(id)
+                .map(found -> {
+                    seller.setId(id);
+                    seller.setUpdated(LocalDateTime.now());
+                    return repository.save(seller);
+                })
+                .orElseThrow(() -> new ResponseException(ServerErrors.SELLER_NOT_FOUND.getMessage()));
     }
 
     @DeleteMapping("/sellers/{id}")
-    public DeleteResponse deleteSeller(@PathVariable int id) {
-        Seller seller = repository.findById(id).orElse(null);
+    public Seller deleteSeller(@PathVariable int id) {
+        Seller seller = repository.findById(id)
+                .orElseThrow(() -> new ResponseException(ServerErrors.SELLER_NOT_FOUND.getMessage()));
 
-        if (seller == null) {
-            return new DeleteResponse(1, "Not found!");
+        try {
+            repository.delete(seller);
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new ResponseException(ServerErrors.SELLER_CONSTRAINT_VIOLATION.getMessage());
+            }
         }
 
-        repository.delete(seller);
-
-        return new DeleteResponse(1, "Deleted!");
+        return seller;
     }
 }

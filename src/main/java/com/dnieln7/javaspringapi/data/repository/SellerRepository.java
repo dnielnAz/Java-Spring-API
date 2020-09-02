@@ -1,8 +1,8 @@
 package com.dnieln7.javaspringapi.data.repository;
 
-import com.dnieln7.javaspringapi.data.model.Seller;
-import com.dnieln7.javaspringapi.data.model.ViewNamePhone;
-import com.dnieln7.javaspringapi.data.model.ViewNamePhoneProducts;
+import com.dnieln7.javaspringapi.data.model.seller.Seller;
+import com.dnieln7.javaspringapi.data.model.seller.ViewNamePhone;
+import com.dnieln7.javaspringapi.data.model.seller.ViewNamePhoneProducts;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
