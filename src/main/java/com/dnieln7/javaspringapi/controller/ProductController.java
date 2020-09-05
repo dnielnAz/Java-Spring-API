@@ -7,7 +7,6 @@ import com.dnieln7.javaspringapi.exception.ServerErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -42,8 +41,6 @@ public class ProductController {
 
     @PostMapping("/products")
     public Product postProduct(@RequestBody Product product) {
-        product.setCreated(LocalDateTime.now());
-        product.setUpdated(LocalDateTime.now());
         return repository.save(product);
     }
 
@@ -51,9 +48,14 @@ public class ProductController {
     public Product putProduct(@PathVariable int id, @RequestBody Product product) {
         return repository.findById(id)
                 .map(found -> {
-                    product.setId(id);
-                    product.setUpdated(LocalDateTime.now());
-                    return repository.save(product);
+
+                    found.setName(product.getName());
+                    found.setDescription(product.getDescription());
+                    found.setQuantity(product.getQuantity());
+                    found.setPrice(product.getPrice());
+                    found.setSeller(product.getSeller());
+
+                    return repository.save(found);
                 })
                 .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
     }
