@@ -1,10 +1,10 @@
 package com.dnieln7.javaspringapi.data.model;
 
+import com.dnieln7.javaspringapi.data.Auditable;
 import com.dnieln7.javaspringapi.data.model.seller.Seller;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 /**
  * Product model (One product can have many sellers).
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product extends Auditable {
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -25,22 +25,17 @@ public class Product {
     private double price;
     @ManyToOne
     private Seller seller;
-    private LocalDateTime updated;
-    @Column(updatable = false)
-    private LocalDateTime created;
 
     public Product() {
     }
 
-    public Product(int id, String name, String description, int quantity, double price, Seller seller, LocalDateTime updated, LocalDateTime created) {
+    public Product(int id, String name, String description, int quantity, double price, Seller seller) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.quantity = quantity;
         this.price = price;
         this.seller = seller;
-        this.updated = updated;
-        this.created = created;
     }
 
     public int getId() {
@@ -89,21 +84,5 @@ public class Product {
 
     public void setSeller(Seller seller) {
         this.seller = seller;
-    }
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
     }
 }

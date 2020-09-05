@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,8 +35,6 @@ public class SellerController {
 
     @PostMapping("/sellers")
     public Seller postSeller(@RequestBody Seller seller) {
-        seller.setCreated(LocalDateTime.now());
-        seller.setUpdated(LocalDateTime.now());
         return repository.save(seller);
     }
 
@@ -45,9 +42,12 @@ public class SellerController {
     public Seller putSeller(@PathVariable int id, @RequestBody Seller seller) {
         return repository.findById(id)
                 .map(found -> {
-                    seller.setId(id);
-                    seller.setUpdated(LocalDateTime.now());
-                    return repository.save(seller);
+
+                    found.setName(seller.getName());
+                    found.setAddress(seller.getAddress());
+                    found.setPhone(seller.getPhone());
+
+                    return repository.save(found);
                 })
                 .orElseThrow(() -> new ResponseException(ServerErrors.SELLER_NOT_FOUND.getMessage()));
     }

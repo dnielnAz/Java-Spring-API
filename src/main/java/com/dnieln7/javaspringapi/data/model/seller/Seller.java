@@ -1,9 +1,12 @@
 package com.dnieln7.javaspringapi.data.model.seller;
 
+import com.dnieln7.javaspringapi.data.Auditable;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Seller model (One seller can have many products).
@@ -12,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "sellers")
-public class Seller {
+public class Seller extends Auditable {
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -21,9 +24,6 @@ public class Seller {
     private String name;
     private String address;
     private String phone;
-    private LocalDateTime updated;
-    @Column(updatable = false)
-    private LocalDateTime created;
 
     public Seller() {
     }
@@ -32,13 +32,11 @@ public class Seller {
         this.id = id;
     }
 
-    public Seller(int id, String name, String address, String phone, LocalDateTime updated, LocalDateTime created) {
+    public Seller(int id, String name, String address, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
-        this.updated = updated;
-        this.created = created;
     }
 
     public int getId() {
@@ -71,21 +69,5 @@ public class Seller {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
     }
 }
