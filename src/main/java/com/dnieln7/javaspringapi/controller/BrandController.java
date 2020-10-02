@@ -1,13 +1,15 @@
 package com.dnieln7.javaspringapi.controller;
 
-import com.dnieln7.javaspringapi.data.model.product.Product;
-import com.dnieln7.javaspringapi.data.repository.ProductRepository;
+import com.dnieln7.javaspringapi.data.model.brand.Brand;
+import com.dnieln7.javaspringapi.data.repository.BrandRepository;
 import com.dnieln7.javaspringapi.utils.ServerErrors;
 import com.dnieln7.javaspringapi.utils.ServerMessages;
 import com.dnieln7.javaspringapi.utils.exception.ResponseException;
 import com.dnieln7.javaspringapi.utils.message.DeleteMessage;
 import com.dnieln7.javaspringapi.utils.message.ErrorMessage;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,27 +19,27 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/products")
-public class ProductController implements GenericController<Product> {
+@RequestMapping("/brands")
+public class BrandController implements GenericController<Brand> {
 
     @Autowired
-    private ProductRepository repository;
+    private BrandRepository repository;
 
     @Override
-    public ResponseEntity<Iterable<Product>> get() {
+    public ResponseEntity<Iterable<Brand>> get() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(repository.findAll());
     }
 
     @Override
-    public ResponseEntity<Object> getById(Integer id) {
-        Optional<Product> container = repository.findById(id);
+    public ResponseEntity<Object> getById(@PathVariable Integer id) {
+        Optional<Brand> container = repository.findById(id);
 
         if (container.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorMessage(ServerErrors.PRODUCT_NOT_FOUND.getMessage() + id));
+                    .body(new ErrorMessage(ServerErrors.BRAND_NOT_FOUND.getMessage() + id));
         }
 
         return ResponseEntity
@@ -46,16 +48,16 @@ public class ProductController implements GenericController<Product> {
     }
 
     @Override
-    public ResponseEntity<Object> post(Product entity) {
-        Optional<Product> container = repository.findByBarCode(entity.getBarCode());
+    public ResponseEntity<Object> post(Brand entity) {
+        Optional<Brand> container = repository.findByName(entity.getName());
 
         if (container.isPresent()) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
-                    .body(new ErrorMessage(ServerErrors.PRODUCT_DUPLICATED.getMessage()));
+                    .body(new ErrorMessage(ServerErrors.BRAND_DUPLICATED.getMessage()));
         }
 
-        Product saved = repository.save(entity);
+        Brand saved = repository.save(entity);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -63,27 +65,24 @@ public class ProductController implements GenericController<Product> {
     }
 
     @Override
-    public ResponseEntity<Object> put(Integer id, Product entity) {
-        Optional<Product> container = repository.findById(id);
+    public ResponseEntity<Object> put(Integer id, Brand entity) {
+        Optional<Brand> container = repository.findById(id);
 
         if (container.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorMessage(ServerErrors.PRODUCT_NOT_FOUND.getMessage() + id));
+                    .body(new ErrorMessage(ServerErrors.BRAND_NOT_FOUND.getMessage() + id));
         }
 
-        Product modified = container.map(product -> {
+        Brand modified = container.map(brand -> {
 
-            product.setBarCode(entity.getBarCode());
-            product.setName(entity.getName());
-            product.setDescription(entity.getDescription());
-            product.setBrand(entity.getBrand());
-            product.setCategory(entity.getCategory());
+            brand.setName(entity.getName());
+            brand.setFullName(entity.getFullName());
 
-            return product;
+            return brand;
         }).orElseThrow(() -> new ResponseException(ServerErrors.GENERIC_ERROR.getMessage()));
 
-        Product saved = repository.save(modified);
+        Brand saved = repository.save(modified);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -92,15 +91,21 @@ public class ProductController implements GenericController<Product> {
 
     @Override
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        Optional<Product> container = repository.findById(id);
+        Optional<Brand> container = repository.findById(id);
 
         if (container.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new DeleteMessage(false, ServerErrors.PRODUCT_NOT_FOUND.getMessage() + id));
+                    .body(new DeleteMessage(false, ServerErrors.BRAND_NOT_FOUND.getMessage() + id));
         }
 
-        repository.delete(container.get());
+        try {
+            repository.delete(container.get());
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new ResponseException(ServerErrors.BRAND_CONSTRAINT_VIOLATION.getMessage());
+            }
+        }
 
         return ResponseEntity
                 .status(HttpStatus.OK)

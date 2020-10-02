@@ -1,13 +1,16 @@
 package com.dnieln7.javaspringapi.controller;
 
+import com.dnieln7.javaspringapi.data.model.customer.Customer;
 import com.dnieln7.javaspringapi.data.model.product.Product;
-import com.dnieln7.javaspringapi.data.repository.ProductRepository;
-import com.dnieln7.javaspringapi.utils.ServerErrors;
 import com.dnieln7.javaspringapi.utils.ServerMessages;
-import com.dnieln7.javaspringapi.utils.exception.ResponseException;
 import com.dnieln7.javaspringapi.utils.message.DeleteMessage;
 import com.dnieln7.javaspringapi.utils.message.ErrorMessage;
+import com.dnieln7.javaspringapi.data.repository.CustomerRepository;
+import com.dnieln7.javaspringapi.utils.exception.ResponseException;
+import com.dnieln7.javaspringapi.utils.ServerErrors;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/products")
-public class ProductController implements GenericController<Product> {
+@RequestMapping("/customers")
+public class CustomerController implements GenericController<Customer> {
 
     @Autowired
-    private ProductRepository repository;
+    private CustomerRepository repository;
 
     @Override
-    public ResponseEntity<Iterable<Product>> get() {
+    public ResponseEntity<Iterable<Customer>> get() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(repository.findAll());
@@ -32,12 +35,12 @@ public class ProductController implements GenericController<Product> {
 
     @Override
     public ResponseEntity<Object> getById(Integer id) {
-        Optional<Product> container = repository.findById(id);
+        Optional<Customer> container = repository.findById(id);
 
         if (container.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorMessage(ServerErrors.PRODUCT_NOT_FOUND.getMessage() + id));
+                    .body(new ErrorMessage(ServerErrors.CUSTOMER_NOT_FOUND.getMessage() + id));
         }
 
         return ResponseEntity
@@ -46,16 +49,16 @@ public class ProductController implements GenericController<Product> {
     }
 
     @Override
-    public ResponseEntity<Object> post(Product entity) {
-        Optional<Product> container = repository.findByBarCode(entity.getBarCode());
+    public ResponseEntity<Object> post(Customer entity) {
+        Optional<Customer> container = repository.findByPhoneOrEmail(entity.getPhone(), entity.getEmail());
 
         if (container.isPresent()) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
-                    .body(new ErrorMessage(ServerErrors.PRODUCT_DUPLICATED.getMessage()));
+                    .body(new ErrorMessage(ServerErrors.CUSTOMER_DUPLICATED.getMessage()));
         }
 
-        Product saved = repository.save(entity);
+        Customer saved = repository.save(entity);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -63,27 +66,26 @@ public class ProductController implements GenericController<Product> {
     }
 
     @Override
-    public ResponseEntity<Object> put(Integer id, Product entity) {
-        Optional<Product> container = repository.findById(id);
+    public ResponseEntity<Object> put(Integer id, Customer entity) {
+        Optional<Customer> container = repository.findById(id);
 
         if (container.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorMessage(ServerErrors.PRODUCT_NOT_FOUND.getMessage() + id));
+                    .body(new ErrorMessage(ServerErrors.CUSTOMER_NOT_FOUND.getMessage() + id));
         }
 
-        Product modified = container.map(product -> {
+        Customer modified = container.map(customer -> {
 
-            product.setBarCode(entity.getBarCode());
-            product.setName(entity.getName());
-            product.setDescription(entity.getDescription());
-            product.setBrand(entity.getBrand());
-            product.setCategory(entity.getCategory());
+            customer.setName(entity.getName());
+            customer.setPhoneCode(entity.getPhoneCode());
+            customer.setPhone(entity.getPhone());
+            customer.setEmail(entity.getEmail());
 
-            return product;
+            return customer;
         }).orElseThrow(() -> new ResponseException(ServerErrors.GENERIC_ERROR.getMessage()));
 
-        Product saved = repository.save(modified);
+        Customer saved = repository.save(modified);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -92,15 +94,21 @@ public class ProductController implements GenericController<Product> {
 
     @Override
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        Optional<Product> container = repository.findById(id);
+        Optional<Customer> container = repository.findById(id);
 
         if (container.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new DeleteMessage(false, ServerErrors.PRODUCT_NOT_FOUND.getMessage() + id));
+                    .body(new DeleteMessage(false, ServerErrors.CUSTOMER_NOT_FOUND.getMessage() + id));
         }
 
-        repository.delete(container.get());
+        try {
+            repository.delete(container.get());
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new ResponseException(ServerErrors.CUSTOMER_CONSTRAINT_VIOLATION.getMessage());
+            }
+        }
 
         return ResponseEntity
                 .status(HttpStatus.OK)
