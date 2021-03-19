@@ -28,13 +28,13 @@ public interface SellerRepository extends CrudRepository<Seller, Integer> {
     public List<ViewNamePhoneProducts> findPopularSellers(int limit);
 
     /**
-     * Find newest sellers based on their created property.
+     * Find newest sellers based on their created_at property.
      *
      * @param days Number of days in the past to search from.
      * @return A list of {@link Seller} that meets the time criteria.
      */
     @Query(
-            value = "select sellers.id, sellers.name, sellers.phone from sellers where sellers.created > current_date - ?1",
+            value = "select sellers.id, sellers.name, sellers.phone from sellers where sellers.created_at > current_date - ?1",
             nativeQuery = true
     )
     public List<ViewNamePhone> findNewestSellers(int days);

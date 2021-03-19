@@ -42,7 +42,13 @@ public class SpringAPI {
                 registry.addMapping("/sellers/{id}").allowedOrigins("*").allowedMethods("PUT", "GET", "DELETE");
                 registry.addMapping("/products").allowedOrigins("*");
                 registry.addMapping("/products/{id}").allowedOrigins("*").allowedMethods("PUT", "GET", "DELETE");
-                registry.addMapping("/dashboard").allowedOrigins("*");
+                registry.addMapping("/dashboard/products/max-price").allowedOrigins("*");
+                registry.addMapping("/dashboard/products/min-price").allowedOrigins("*");
+                registry.addMapping("/dashboard/products/most-available").allowedOrigins("*");
+                registry.addMapping("/dashboard/products/less-available").allowedOrigins("*");
+                registry.addMapping("/dashboard/products/newest").allowedOrigins("*");
+                registry.addMapping("/dashboard/sellers/newest").allowedOrigins("*");
+                registry.addMapping("/dashboard/sellers/popular").allowedOrigins("*");
             }
         };
     }

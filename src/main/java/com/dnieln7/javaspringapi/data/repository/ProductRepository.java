@@ -57,11 +57,11 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     public List<Product> findLessAvailableProducts(int limit);
 
     /**
-     * Find newest products based on their created property.
+     * Find newest products based on their created_at property.
      *
      * @param days Number of days in the past to search from.
      * @return A list of {@link Product} that meets the time criteria.
      */
-    @Query(value = "select * from products where products.created > current_date - ?1", nativeQuery = true)
+    @Query(value = "select * from products where products.created_at > current_date - ?1", nativeQuery = true)
     public List<Product> findNewestProducts(int days);
 }
