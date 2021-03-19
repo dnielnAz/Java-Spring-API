@@ -1,11 +1,11 @@
 package com.dnieln7.javaspringapi.data.repository;
 
 import com.dnieln7.javaspringapi.data.model.Product;
+import com.dnieln7.javaspringapi.data.model.Seller;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Crud operations for {@link Product} model.
@@ -28,7 +28,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
      * @return A {@link Product} instance with the highest price.
      */
     @Query(value = "select * from products order by products.price desc limit 1", nativeQuery = true)
-    public Optional<Product> findMaxPrice();
+    public Product findMaxPrice();
 
     /**
      * Find cheapest product.
@@ -36,7 +36,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
      * @return A {@link Product} instance with the lowest price.
      */
     @Query(value = "select * from products order by products.price asc limit 1", nativeQuery = true)
-    public Optional<Product> findMinPrice();
+    public Product findMinPrice();
 
     /**
      * Find most available products.
@@ -57,11 +57,11 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     public List<Product> findLessAvailableProducts(int limit);
 
     /**
-     * Find newest products based on their created_at property.
+     * Find newest products based on their created property.
      *
      * @param days Number of days in the past to search from.
      * @return A list of {@link Product} that meets the time criteria.
      */
-    @Query(value = "select * from products where products.created_at > current_date - ?1", nativeQuery = true)
+    @Query(value = "select * from products where products.created > current_date - ?1", nativeQuery = true)
     public List<Product> findNewestProducts(int days);
 }

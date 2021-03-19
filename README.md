@@ -1,19 +1,6 @@
 # Java Spring API
 
-Inventory management systems that allows entrances and exits operations
-
-## Features
-
-### System features
-
-* Product management
-* Seller management
-* Dashboard operations
-
-### Framework features
-
-* Swagger documentation
-* Spring data JPA Auditing
+_Java API example_
 
 ## Built With 🛠️
 

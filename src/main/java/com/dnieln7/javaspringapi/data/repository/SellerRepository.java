@@ -1,8 +1,8 @@
 package com.dnieln7.javaspringapi.data.repository;
 
-import com.dnieln7.javaspringapi.data.model.seller.Seller;
-import com.dnieln7.javaspringapi.data.model.seller.ViewNamePhone;
-import com.dnieln7.javaspringapi.data.model.seller.ViewNamePhoneProducts;
+import com.dnieln7.javaspringapi.data.model.Seller;
+import com.dnieln7.javaspringapi.data.model.ViewNamePhone;
+import com.dnieln7.javaspringapi.data.model.ViewNamePhoneProducts;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -28,13 +28,13 @@ public interface SellerRepository extends CrudRepository<Seller, Integer> {
     public List<ViewNamePhoneProducts> findPopularSellers(int limit);
 
     /**
-     * Find newest sellers based on their created_at property.
+     * Find newest sellers based on their created property.
      *
      * @param days Number of days in the past to search from.
      * @return A list of {@link Seller} that meets the time criteria.
      */
     @Query(
-            value = "select sellers.id, sellers.name, sellers.phone from sellers where sellers.created_at > current_date - ?1",
+            value = "select sellers.id, sellers.name, sellers.phone from sellers where sellers.created > current_date - ?1",
             nativeQuery = true
     )
     public List<ViewNamePhone> findNewestSellers(int days);

@@ -1,12 +1,12 @@
 package com.dnieln7.javaspringapi.controller;
 
+import com.dnieln7.javaspringapi.controller.response.DeleteResponse;
 import com.dnieln7.javaspringapi.data.model.Product;
 import com.dnieln7.javaspringapi.data.repository.ProductRepository;
-import com.dnieln7.javaspringapi.exception.ResponseException;
-import com.dnieln7.javaspringapi.exception.ServerErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -35,38 +35,33 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public Product getProductById(@PathVariable int id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
+        return repository.findById(id).orElse(null);
     }
 
     @PostMapping("/products")
     public Product postProduct(@RequestBody Product product) {
+        product.setCreated(LocalDateTime.now());
+        product.setUpdated(LocalDateTime.now());
         return repository.save(product);
     }
 
     @PutMapping("/products/{id}")
     public Product putProduct(@PathVariable int id, @RequestBody Product product) {
-        return repository.findById(id)
-                .map(found -> {
-
-                    found.setName(product.getName());
-                    found.setDescription(product.getDescription());
-                    found.setQuantity(product.getQuantity());
-                    found.setPrice(product.getPrice());
-                    found.setSeller(product.getSeller());
-
-                    return repository.save(found);
-                })
-                .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
+        product.setId(id);
+        product.setUpdated(LocalDateTime.now());
+        return repository.save(product);
     }
 
     @DeleteMapping("/products/{id}")
-    public Product deleteProduct(@PathVariable int id) {
-        Product product = repository.findById(id)
-                .orElseThrow(() -> new ResponseException(ServerErrors.PRODUCT_NOT_FOUND.toString()));
+    public DeleteResponse deleteProduct(@PathVariable int id) {
+        Product product = repository.findById(id).orElse(null);
+
+        if (product == null) {
+            return new DeleteResponse(1, "Not found!");
+        }
 
         repository.delete(product);
 
-        return product;
+        return new DeleteResponse(1, "Deleted!");
     }
 }
